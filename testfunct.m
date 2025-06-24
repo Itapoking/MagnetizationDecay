@@ -11,5 +11,5 @@
  Nslice=gridsize(3)/2
  Nstepshow=2
  Nstepz=2
-surf(x(:,:,Nslice), y(:,:,Nslice),  -Bdipz(:,:,Nslice));
-% quiver3(x(1:Nstepshow:end),y(1:Nstepshow:end),z(1:Nstepz:end),Bdipx(1:Nstepshow:end),Bdipy(1:Nstepshow:end),Bdipz(1:Nstepz:end))
+% surf(x(:,:,Nslice), y(:,:,Nslice),  -Bdipz(:,:,Nslice));
+quiver3(x(1:Nstepshow:end),y(1:Nstepshow:end),z(1:Nstepz:end),Bdipx(1:Nstepshow:end),Bdipy(1:Nstepshow:end),Bdipz(1:Nstepz:end))
