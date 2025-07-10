@@ -14,7 +14,7 @@ function wdip = Bfield_DP(M, K, mask, gridsize, DFTset, gamma, mu0, length, heig
     %  DFTset = [zfx, zfy, zfz] zero filling;
     %  center of OxOyOz at the center of grid box
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    M = reshape(M, [size(mask) 3]);
+    M = reshape(M, [size(mask) 6]);
     Mx = M(:,:,:,1); My = M(:,:,:,2); Mz = M(:,:,:,3);
     zfx = DFTset(1); zfy = DFTset(2); zfz = DFTset(3);
     gridx = gridsize(1); gridy = gridsize(2); gridz = gridsize(3);

@@ -2,13 +2,16 @@ function wrd = Bfield_RD(M, psi, mu0, gamma, nuQ, mask)
     % psi - angle between RD field and magnetization
     % nuQ - coil constant
     % muo, gamma - vacuu magnetic permeability and gyromagnetic ration
-
-    [Mx, My, Mz, Mnorm] = M_averaging(M, mask);
+    if(iscolumn(M) == 0)
+        M = M';
+    end
+    [Mxa, Mya, Mza, Mnorm] = M_averaging(M(1:size(M, 1)/2), mask);
+    [Mxb, Myb, Mzb, Mnorm] = M_averaging(M(size(M, 1)/2 + 1:size(M)), mask);
     wrd = ones([size(mask) 3]);
     psi = psi/180*pi;
     sizemask = size(mask);
-    Bx_RD = 1*(-Mx*sin(psi) - My*cos(psi));
-    By_RD = -1*(-Mx*cos(psi) + My*sin(psi));
+    Bx_RD = 1*(-(Mxa + Mxb)*sin(psi) - (Mya + Myb)*cos(psi));
+    By_RD = -1*(-(Mxa + Mxb)*cos(psi) + (Mya + Myb)*sin(psi));
     Bz_RD = 0;
 
 

@@ -1,4 +1,4 @@
-function [Minit, K, mask, grid, dw] = Initialize_box(gridsize, M0init, shapesize, DFTset, offset, length, height, shim)
+function [Minit, K, mask, grid, dw] = Initialize_box(gridsize, M0initA, M0initB, shapesize, DFTset, offset, length, height, shim)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  gridsize = [nx, ny, nz] number of points for grid 
 %  boxsize = [a, b, c] - size of simulation box along Ox, Oy, Oz
@@ -10,7 +10,8 @@ function [Minit, K, mask, grid, dw] = Initialize_box(gridsize, M0init, shapesize
 
     % unpacking values
     gridx = gridsize(1); gridy = gridsize(2); gridz = gridsize(3);
-    theta = M0init(1)/180*pi; phi = M0init(2)/180*pi; M0 = M0init(3); enh = M0init(4);
+    thetaA = M0initA(1)/180*pi; phiA = M0initA(2)/180*pi; M0A = M0initA(3); enhA = M0initA(4);
+    thetaB = M0initB(1)/180*pi; phiB = M0initB(2)/180*pi; M0B = M0initB(3); enhB = M0initB(4);
     zfx = DFTset(1); zfy = DFTset(2); zfz = DFTset(3); 
     L = shapesize(1); R = shapesize(2);
     dx = length/gridx; dy = length/gridy; dz = height/gridz;
@@ -66,14 +67,24 @@ function [Minit, K, mask, grid, dw] = Initialize_box(gridsize, M0init, shapesize
 
 
     % make M grid array
-    MdV = M0*enh;
-    Minit = ones(gridx, gridy, gridz, 3);
-    Minit(:,:,:,1) = MdV*sin(theta)*cos(phi)*Minit(:,:,:,1);
-    Minit(:,:,:,2) = MdV*sin(theta)*sin(phi)*Minit(:,:,:,2);
-    Minit(:,:,:,3) = MdV*cos(theta)*cos(phi)*Minit(:,:,:,3);
+    MdVA = M0A*enhA;
+    Minit = ones(gridx, gridy, gridz, 6);
+    Minit(:,:,:,1) = MdVA*sin(thetaA)*cos(phiA)*Minit(:,:,:,1);
+    Minit(:,:,:,2) = MdVA*sin(thetaA)*sin(phiA)*Minit(:,:,:,2);
+    Minit(:,:,:,3) = MdVA*cos(thetaA)*cos(phiA)*Minit(:,:,:,3);
 
     Minit(:,:,:,1) = Minit(:,:,:,1).*mask;
     Minit(:,:,:,2) = Minit(:,:,:,2).*mask;
     Minit(:,:,:,3) = Minit(:,:,:,3).*mask;
+
+    MdVB = M0B*enhB;
+    Minit(:,:,:,4) = MdVB*sin(thetaB)*cos(phiB)*Minit(:,:,:,1);
+    Minit(:,:,:,5) = MdVB*sin(thetaB)*sin(phiB)*Minit(:,:,:,2);
+    Minit(:,:,:,6) = MdVB*cos(thetaB)*cos(phiB)*Minit(:,:,:,3);
+
+    Minit(:,:,:,4) = Minit(:,:,:,4).*mask;
+    Minit(:,:,:,5) = Minit(:,:,:,5).*mask;
+    Minit(:,:,:,6) = Minit(:,:,:,6).*mask;
+    
     Minit = Minit(:);
 end

@@ -33,7 +33,7 @@ Bsoft = 1896*2*pi; % Max B1 field of selective pulse
 % magnetization parametes
 % |M0|in A/m units; enhancement = 1 for thermal and around 20 for
 % hyperpolarized sample
-M0 = [0, 0, 0.038, 20];  % theta, phi, |M0|, enhancement
+M0 = [0, 0, 0.038, 10];  % theta, phi, |M0|, enhancement
 offset = 1*[0, 0, -1776*2*pi]; % -1776*2*pi it is frequency difference between water signal and pulse frequency (you can change +/- sign)
 R1 = 1/12; R2 = 1/2; % R1 and R2 is it 1/T1 and 1/T2 which is fixed and you don't need to change it.
 
@@ -42,13 +42,13 @@ R1 = 1/12; R2 = 1/2; % R1 and R2 is it 1/T1 and 1/T2 which is fixed and you don'
 % real values but looks like 
 % enhancdip = 1 gives normal values around 4 Hz for thermal M0.
 % I think you can change it from 1 to 60
-enhancdip=40;
+enhancdip=10;
 
 % circuit parameters nuQ it is parameter which define strenght of RD field.
 % Normal values of nuQ is 50. But you can change from 20 to 60.
 % psi if is "Impedance shift" which is not more than 1 degree in our case.
 % You can put 0 and forget about it.
-nuQ = 43.57*0.5; psi = 0;
+nuQ = 60; psi = 0;
 
 % constant
 mu0 = 4*pi*1e-7; gamma = 42.57*1e6;
@@ -74,108 +74,11 @@ for n = 1:Nstep
     [t, M] = ode113(@(t, M) MaxBloch_integrator(M, dw, wdip, wrd, R1, R2, M0(end-1), gridsize(1), gridsize(2), gridsize(3), mask), linspace(0, dt, 3), Minit);
     Minit = M(3, :);
     [Mx, My, Mz, Mnorm] = M_averaging(Minit, mask);
-    [wdipx, wdipy, wdipz, wdipnorm] = M_averaging(wdip, mask);
-    [wrdx, wrdy, wrdz, wrdnorm] = M_averaging(wrd, mask);
+    % [wdipx, wdipy, wdipz, wdipnorm] = M_averaging(wdip, mask);
+    % [wrdx, wrdy, wrdz, wrdnorm] = M_averaging(wrd, mask);
     observables(n, 1) = dt*(n-1);
     observables(n, 2) = Mx; observables(n, 3) = My; observables(n, 4) = Mz; observables(n, 5) = Mnorm;
 end
-% % 
-% % % % dt = 0.0001
-% % % % % dt=2*dt;
-
-% % dt = 2*dt;
-for n = 1:2*Nstep
-    n + 1000
-    dw(1:nstepsmal) = zeros(nstepsmal,1);%Bampx(n)*ones([nstepsmal 1]);
-    wdip = enhancdip*Bfield_DP(Minit, K, mask, gridsize, DFTset, gamma, mu0);
-    wrd  = Bfield_RD(Minit, psi, mu0, gamma, nuQ, mask);
-    [t, M] = ode113(@(t, M) MaxBloch_integrator(M, dw, wdip, wrd, R1, R2, M0(end-1), gridsize(1), gridsize(2), gridsize(3), mask), linspace(0, dt, 3), Minit);
-    Minit = M(3, :);
-    [Mx, My, Mz, Mnorm] = M_averaging(Minit, mask);
-    observables(n + 1000, 1) = dt*(n + 1000-1);
-    observables(n + 1000, 2) = Mx; observables(n + 1000, 3) = My; observables(n + 1000, 4) = Mz; observables(n + 1000, 5) = Mnorm;
-end
-
-for n = 1:Nstep
-    n + 3000
-    dw(1:nstepsmal) = Bampx(n)*ones([nstepsmal 1]);
-    wdip = enhancdip*Bfield_DP(Minit, K, mask, gridsize, DFTset, gamma, mu0);
-    wrd  = Bfield_RD(Minit, psi, mu0, gamma, nuQ, mask);
-    [t, M] = ode113(@(t, M) MaxBloch_integrator(M, dw, wdip, wrd, R1, R2, M0(end-1), gridsize(1), gridsize(2), gridsize(3), mask), linspace(0, dt, 3), Minit);
-    Minit = M(3, :);
-    [Mx, My, Mz, Mnorm] = M_averaging(Minit, mask);
-    [wdipx, wdipy, wdipz, wdipnorm] = M_averaging(wdip, mask);
-    [wrdx, wrdy, wrdz, wrdnorm] = M_averaging(wrd, mask);
-    observables(n+3000, 1) = dt*(n+3000-1);
-    observables(n+3000, 2) = Mx; observables(n+3000, 3) = My; observables(n+3000, 4) = Mz; observables(n+3000, 5) = Mnorm;
-    % fields(n, 1) = dt*(n-1);
-    % fields(n, 2) = wdipx; fields(n, 3) = wdipy; fields(n, 4) = wdipz;
-    % fields(n, 5) = wrdx; fields(n, 6) = wrdy; fields(n, 7) = wrdz;
-end
-
-for n = 1:2*Nstep
-    n + 4000
-    dw(1:nstepsmal) = zeros(nstepsmal,1);%Bampx(n)*ones([nstepsmal 1]);
-    wdip = enhancdip*Bfield_DP(Minit, K, mask, gridsize, DFTset, gamma, mu0);
-    wrd  = Bfield_RD(Minit, psi, mu0, gamma, nuQ, mask);
-    [t, M] = ode113(@(t, M) MaxBloch_integrator(M, dw, wdip, wrd, R1, R2, M0(end-1), gridsize(1), gridsize(2), gridsize(3), mask), linspace(0, dt, 3), Minit);
-    Minit = M(3, :);
-    [Mx, My, Mz, Mnorm] = M_averaging(Minit, mask);
-    observables(n+4000, 1) = dt*(n+4000-1);
-    observables(n+4000, 2) = Mx; observables(n+4000, 3) = My; observables(n+4000, 4) = Mz; observables(n+4000, 5) = Mnorm;
-end
-
-for n = 1:Nstep
-    x = n + 6000
-    dw(1:nstepsmal) = Bampx(n)*ones([nstepsmal 1]);
-    wdip = enhancdip*Bfield_DP(Minit, K, mask, gridsize, DFTset, gamma, mu0);
-    wrd  = Bfield_RD(Minit, psi, mu0, gamma, nuQ, mask);
-    [t, M] = ode113(@(t, M) MaxBloch_integrator(M, dw, wdip, wrd, R1, R2, M0(end-1), gridsize(1), gridsize(2), gridsize(3), mask), linspace(0, dt, 3), Minit);
-    Minit = M(3, :);
-    [Mx, My, Mz, Mnorm] = M_averaging(Minit, mask);
-    [wdipx, wdipy, wdipz, wdipnorm] = M_averaging(wdip, mask);
-    [wrdx, wrdy, wrdz, wrdnorm] = M_averaging(wrd, mask);
-    observables(x, 1) = dt*(x-1);
-    observables(x, 2) = Mx; observables(x, 3) = My; observables(x, 4) = Mz; observables(x, 5) = Mnorm;
-end
-
-for n = 1:2*Nstep
-    x = n + 7000
-    dw(1:nstepsmal) = zeros(nstepsmal,1);%Bampx(n)*ones([nstepsmal 1]);
-    wdip = enhancdip*Bfield_DP(Minit, K, mask, gridsize, DFTset, gamma, mu0);
-    wrd  = Bfield_RD(Minit, psi, mu0, gamma, nuQ, mask);
-    [t, M] = ode113(@(t, M) MaxBloch_integrator(M, dw, wdip, wrd, R1, R2, M0(end-1), gridsize(1), gridsize(2), gridsize(3), mask), linspace(0, dt, 3), Minit);
-    Minit = M(3, :);
-    [Mx, My, Mz, Mnorm] = M_averaging(Minit, mask);
-    observables(x, 1) = dt*(x-1);
-    observables(x, 2) = Mx; observables(x, 3) = My; observables(x, 4) = Mz; observables(x, 5) = Mnorm;
-end
-for n = 1:Nstep
-    x = n + 9000
-    dw(1:nstepsmal) = Bampx(n)*ones([nstepsmal 1]);
-    wdip = enhancdip*Bfield_DP(Minit, K, mask, gridsize, DFTset, gamma, mu0);
-    wrd  = Bfield_RD(Minit, psi, mu0, gamma, nuQ, mask);
-    [t, M] = ode113(@(t, M) MaxBloch_integrator(M, dw, wdip, wrd, R1, R2, M0(end-1), gridsize(1), gridsize(2), gridsize(3), mask), linspace(0, dt, 3), Minit);
-    Minit = M(3, :);
-    [Mx, My, Mz, Mnorm] = M_averaging(Minit, mask);
-    [wdipx, wdipy, wdipz, wdipnorm] = M_averaging(wdip, mask);
-    [wrdx, wrdy, wrdz, wrdnorm] = M_averaging(wrd, mask);
-    observables(x, 1) = dt*(x-1);
-    observables(x, 2) = Mx; observables(x, 3) = My; observables(x, 4) = Mz; observables(x, 5) = Mnorm;
-end
-
-for n = 1:2*Nstep
-    x = n + 10000
-    dw(1:nstepsmal) = zeros(nstepsmal,1);%Bampx(n)*ones([nstepsmal 1]);
-    wdip = enhancdip*Bfield_DP(Minit, K, mask, gridsize, DFTset, gamma, mu0);
-    wrd  = Bfield_RD(Minit, psi, mu0, gamma, nuQ, mask);
-    [t, M] = ode113(@(t, M) MaxBloch_integrator(M, dw, wdip, wrd, R1, R2, M0(end-1), gridsize(1), gridsize(2), gridsize(3), mask), linspace(0, dt, 3), Minit);
-    Minit = M(3, :);
-    [Mx, My, Mz, Mnorm] = M_averaging(Minit, mask);
-    observables(x, 1) = dt*(x-1);
-    observables(x, 2) = Mx; observables(x, 3) = My; observables(x, 4) = Mz; observables(x, 5) = Mnorm;
-end
-
 
 % % % 
 % % % N = size(observables(:, 2),1);
@@ -209,7 +112,8 @@ xlim([-20 20])
 % set('LineWidth',4, 'FontName','Helvetica','FontSize',11);
 
 % plot(squeeze(M12(4,4,:,3)))
- plot(observables(:,1), observables(:,2),'bo-',observables(:,1), observables(:,3),'ro-',observables(:,1), observables(:,4),'o-',observables(:,1), observables(:,5),'b-')
+plot(observables(:,1), observables(:,2),'bo',observables(:,1), observables(:,3),'ro',observables(:,1), observables(:,4),'o',observables(:,1), observables(:,5),'g*')
+legend({'Mx', 'My', 'Mz', 'Mnorm'},'Location','NorthWest'); drawnow;
 % 
 % subplot()
 % plot(fields(:,1), fields(:,2),'bo-',fields(:,1), fields(:,3),'ro-',fields(:,1), fields(:,4),'ko-')
